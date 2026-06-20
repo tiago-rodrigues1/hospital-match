@@ -2,29 +2,17 @@
 #include <fstream>
 #include <vector>
 #include <string>
-using namespace std;
 
-struct Patient {
-    int id;
-};
+#include "./include/patient.hpp"
+#include "./include/hospitalbed.hpp"
+#include "./include/parser.hpp"
 
-struct HospitalBed {
-    int idBed;
-    int idHospital;
-};
-
-struct InstanceGAP {
-    vector<Patient> patients;
-    vector<HospitalBed> beds;
-    vector<vector<int>> expandedCostMatrix;
-};
-
-vector<InstanceGAP> parserORLibraryGAP(const string& filename) {
-    ifstream file(filename);
-    vector<InstanceGAP> instances;
+std::vector<InstanceGAP> parserORLibraryGAP(const std::string& filename) {
+    std::ifstream file(filename);
+    std::vector<InstanceGAP> instances;
 
     if (!file.is_open()) {
-        cerr << "Erro ao abrir o arquivo " << filename << endl;
+        std::cerr << "Erro ao abrir o arquivo " << filename << std::endl;
         exit(1);
     }
 
@@ -32,16 +20,16 @@ vector<InstanceGAP> parserORLibraryGAP(const string& filename) {
     file >> numProblems;
 
     for (int p = 0; p < numProblems; p++) {
-        InstanceGAP instance;
         int m, n;
-
         file >> m >> n;
 
-        for (int j = 0; j < n; j++) {
-            instance.patients.push_back({j});
+        InstanceGAP instance;
+
+        for (int i = 0; i < n; i++) {
+            instance.addPatient(Patient(i));
         }
 
-        vector<vector<int>> costs(m, vector<int>(n));
+        std::vector<std::vector<int>> costs(m, std::vector<int>(n));
 
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
@@ -57,26 +45,30 @@ vector<InstanceGAP> parserORLibraryGAP(const string& filename) {
             }
         }
 
-        int initialId = 0;
-        vector<int> capacities(m);
+        int currentId = 0;
+        std::vector<int> capacities(m);
+        std::vector<int> bedToHospitalIndex;
 
         for (int i = 0; i < m; i++) {
             file >> capacities[i];
 
             for (int j = 0; j < capacities[i]; j++) {
-                instance.beds.push_back({initialId++, i});
+                instance.addBed(HospitalBed(currentId++, i));
+                bedToHospitalIndex.push_back(i);
             }
         }
 
-        int totalBeds = instance.beds.size();
-        instance.expandedCostMatrix = vector<vector<int>>(n, vector<int>(totalBeds));
+        int totalBeds = instance.beds().size();
+        std::vector<std::vector<int>> localMatrix(n, std::vector<int>(totalBeds));
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < totalBeds; j++) {
-                int hospital = instance.beds[j].idHospital;
-                instance.expandedCostMatrix[i][j] = costs[hospital][i];
+                int hospitalIndex = bedToHospitalIndex[j];
+                localMatrix[i][j] = costs[hospitalIndex][i]; 
             }
         }
+
+        instance.setExpandedCostMatrix(localMatrix);
 
         instances.push_back(instance);
     }
@@ -87,19 +79,19 @@ vector<InstanceGAP> parserORLibraryGAP(const string& filename) {
 }
 
 int main() {
-    string arquivoTeste = "instances/gapa.txt"; 
+    std::string arquivoTeste = "../instances/gapa.txt"; 
     
-    vector<InstanceGAP> meusTestes = parserORLibraryGAP(arquivoTeste);
+    std::vector<InstanceGAP> meusTestes = parserORLibraryGAP(arquivoTeste);
 
     if (!meusTestes.empty()) {
-        cout << "Leitura concluída com sucesso!" << endl;
-        cout << "O arquivo continha " << meusTestes.size() << " instâncias de teste." << endl;
+        std::cout << "Leitura concluída com sucesso!" << std::endl;
+        std::cout << "O arquivo continha " << meusTestes.size() << " instâncias de teste." << std::endl;
         
         InstanceGAP& primeira = meusTestes[0];
-        cout << "--- Primeira Instância ---" << endl;
-        cout << "Total de Pacientes: " << primeira.patients.size() << endl;
-        cout << "Total de Hospitais (Agentes): " << primeira.beds.back().idHospital + 1 << endl;
-        cout << "Total de Leitos Expandidos: " << primeira.beds.size() << endl;
+        std::cout << "--- Primeira Instância ---" << std::endl;
+        std::cout << "Total de Pacientes: " << primeira.patients().size() << std::endl;
+        std::cout << "Total de Hospitais (Agentes): " << primeira.beds().back().id() + 1 << std::endl;
+        std::cout << "Total de Leitos Expandidos: " << primeira.beds().size() << std::endl;
     }
 
     return 0;
