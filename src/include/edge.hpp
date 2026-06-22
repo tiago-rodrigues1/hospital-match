@@ -1,5 +1,5 @@
-#ifndef GRAPH_HPP
-#define GRAPH_HPP
+#ifndef EDGE_HPP
+#define EDGE_HPP
 
 #include "./patient.hpp"
 #include "./hospitalbed.hpp"
