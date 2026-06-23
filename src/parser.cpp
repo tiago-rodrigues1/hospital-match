@@ -6,6 +6,7 @@
 #include "./include/patient.hpp"
 #include "./include/hospitalbed.hpp"
 #include "./include/parser.hpp"
+#include "parser.hpp"
 
 std::vector<InstanceGAP> parserORLibraryGAP(const std::string& filename) {
     std::ifstream file(filename);
@@ -78,8 +79,24 @@ std::vector<InstanceGAP> parserORLibraryGAP(const std::string& filename) {
     return instances;
 }
 
+void InstanceGAP::calculateEdgeWeights() {
+    for (size_t i = 0; i < m_patients.size(); i++) {
+        for (size_t j = 0; j < m_patients.size(); j++) {
+            auto patient = m_patients[i];
+            auto bed = m_beds[j];
+
+            if (patient.required_specialty() == bed.specialty()) {
+                double distance = patient.loc().getDistanceTo(bed.loc());
+                double weight = distance / patient.priority();
+
+                addEdge(Edge(i, j, weight));
+            }
+        }
+    }
+}
+
 int main() {
-    std::string arquivoTeste = "../instances/gapa.txt"; 
+    std::string arquivoTeste = "./instances/gapa.txt"; 
     
     std::vector<InstanceGAP> meusTestes = parserORLibraryGAP(arquivoTeste);
 
@@ -92,6 +109,7 @@ int main() {
         std::cout << "Total de Pacientes: " << primeira.patients().size() << std::endl;
         std::cout << "Total de Hospitais (Agentes): " << primeira.beds().back().id() + 1 << std::endl;
         std::cout << "Total de Leitos Expandidos: " << primeira.beds().size() << std::endl;
+        std::cout << "Total de arestas: " << primeira.edges().size() << std::endl;
     }
 
     return 0;
