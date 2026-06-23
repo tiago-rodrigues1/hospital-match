@@ -6,20 +6,16 @@
 
 class Edge {
   private:
-    Patient* m_patient;
-    HospitalBed* m_bed;
+    size_t m_patientIndex;
+    size_t m_bedIndex;
     double m_weight;
 
   public:
-    Edge(Patient& patient, HospitalBed& bed, double weight);
+    Edge(size_t patientIdx, size_t bedIdx, double weight);
 
     double weight() const { return m_weight; }
-    const Patient& patient() const { return *m_patient; }
-    const HospitalBed& bed() const { return *m_bed; }
-
-    void setWeight(double weight) { m_weight = weight; }
-    void setPatient(Patient& patient) { m_patient = &patient; }
-    void setBed(HospitalBed& bed) { m_bed = &bed; }
+    size_t patientIdx() const { return m_patientIndex; }
+    size_t bedIdx() const { return m_bedIndex; }
 };
 
 #endif

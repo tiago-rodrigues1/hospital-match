@@ -11,8 +11,8 @@ std::vector<std::vector<int>> buildCostMatrix(const std::vector<Patient>& patien
     std::vector<std::vector<int>> costMatrix(n, std::vector<int>(n, INF));
 
     for (const Edge& edge : viableEdges) {
-        int i = edge.patient().id();
-        int j = edge.bed().id();
+        int i = edge.patientIdx();
+        int j = edge.bedIdx();
 
         costMatrix[i][j] = static_cast<int>(std::round(edge.weight()*MULTIPLIER));
     }
