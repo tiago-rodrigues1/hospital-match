@@ -29,14 +29,6 @@ std::vector<std::vector<int>> buildCostMatrix(const std::vector<Patient>& patien
     return costMatrix;
 }
 
-void updateMatching(std::vector<int> &p, std::vector<int> &path, int &j0) {
-    do {
-        int j1 = path[j0];
-        p[j0]  = p[j1];
-        j0     = j1;
-    } while (j0 != 0);
-}
-
 std::vector<Edge> extractValid(
     const std::vector<int>& p, 
     const std::vector<std::vector<int>>& costMatrix,
