@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "./include/algorithms.hpp"
 
 std::vector<std::vector<int>> buildCostMatrix(const std::vector<Patient>& patients,
@@ -26,4 +27,48 @@ std::vector<std::vector<int>> buildCostMatrix(const std::vector<Patient>& patien
     }
 
     return costMatrix;
+}
+
+void updateMatching(std::vector<int> &p, std::vector<int> &path, int &j0) {
+    do {
+        int j1 = path[j0];
+        p[j0]  = p[j1];
+        j0     = j1;
+    } while (j0 != 0);
+}
+
+std::vector<Edge> extractValid(
+    const std::vector<int>& p, 
+    const std::vector<std::vector<int>>& costMatrix,
+    const std::vector<Patient>& patients,
+    const std::vector<HospitalBed>& beds
+) {
+    int numPatients = patients.size();
+    int numBeds = beds.size();
+
+    int n = std::max(numPatients, numBeds);
+    std::vector<Edge> validAllocations;
+
+    for (int j = 0; j < n; j++) {
+        int i = p[j];
+        
+        if (i <= 0) continue;
+        if (i > numPatients || i > numBeds) continue;
+
+        if (costMatrix[i][j] > INF) {
+            validAllocations.push_back(Edge(i, j, costMatrix[i][j]));
+        }
+    }
+
+    return validAllocations;
+}
+
+int calculateTotalCost(const std::vector<Edge> &edges) {
+  int totalCost = 0;
+
+  for (const auto& edge : edges) {
+    totalCost += edge.weight();
+  }
+
+  return totalCost;
 }
