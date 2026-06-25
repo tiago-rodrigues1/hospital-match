@@ -105,9 +105,9 @@ int main(int argc, char* argv[]) {
   int numBeds = instance.beds().size();
   std::vector<std::vector<int>> costMatrix = instance.expandedCostMatrix();
 
-  std::vector<int> p = hungarianAlgorithm(instance.expandedCostMatrix(), std::max(numPatients, numBeds));
+  std::vector<int> p = hungarianAlgorithm(costMatrix, costMatrix.size() - 1);
   std::vector<Edge> validAllocations = extractValid(p, costMatrix, instance.patients(), instance.beds());
-  int totalCost = calculateTotalCost(validAllocations);
+  double totalCost = calculateTotalCost(validAllocations);
   int executionTime = 100;
 
   std::cout << "Arquivo lido com sucesso!" << std::endl;

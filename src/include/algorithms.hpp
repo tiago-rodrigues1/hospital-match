@@ -20,7 +20,7 @@ std::vector<Edge> extractValid(
   const std::vector<HospitalBed>& beds
 );
 
-int calculateTotalCost(const std::vector<Edge>& edges);
+double calculateTotalCost(const std::vector<Edge>& edges);
 
 int searchAugmentingPath(int currentPatient,
                          const std::vector<std::vector<int>>& costMatrix,

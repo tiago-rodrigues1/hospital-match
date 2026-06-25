@@ -21,7 +21,7 @@ Instance parserORLibraryAPDense(const std::string& filename) {
     
     Instance instance;
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 1; i <= n; i++) {
         instance.addPatient(Patient(i));
         instance.addBed(HospitalBed(i, i)); // Nesse caso, consideramos que cada leito vem de um hospital diferente
     }
@@ -56,7 +56,7 @@ Instance parserORLibraryAPSparse(const std::string& filename) {
     int n;
     file >> n;
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 1; i <= n; i++) {
         instance.addPatient(Patient(i));
         instance.addBed(HospitalBed(i, i));
     }
@@ -93,7 +93,7 @@ Instance parserRealProblem(const std::string& filename) {
     int n, m;
     file >> n >> m;
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 1; i <= n; i++) {
         std::string name, specialty;
         int priority;
         double x, y;
@@ -103,9 +103,9 @@ Instance parserRealProblem(const std::string& filename) {
         instance.addPatient(Patient(i, name, specialty, priority, Location{x, y}));
     }
 
-    int globalBedId = 0;
+    int globalBedId = 1;
 
-    for (int i = 0; i < m; i++) {
+    for (int i = 1; i <= m; i++) {
         std::string hospital, specialty;
         int capacity;
         double x, y;
