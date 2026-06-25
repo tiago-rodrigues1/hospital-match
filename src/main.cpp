@@ -56,7 +56,13 @@ std::string get_output_filename(const std::string& path) {
   return outputPrefix + filename;
 }
 
-void write_data(const RunningOpt& runningOpt, const Instance& instance, int totalCost, int executionTime) {
+void write_data(
+  const RunningOpt& runningOpt,
+  const Instance& instance,
+  int totalCost,
+  int executionTime,
+  const std::vector<Edge>& edges
+) {
   std::string outputFilename = get_output_filename(runningOpt.inputPath);
   std::ofstream file(outputFilename);
 
@@ -70,6 +76,18 @@ void write_data(const RunningOpt& runningOpt, const Instance& instance, int tota
   file << instance.beds().size() << ", ";
   file << totalCost << ", ";
   file << executionTime << "\n";
+
+  if (runningOpt.parser == NON_OR_LIB_RP) {
+    file << "- allocations\n";
+
+    for (const Edge& edge : edges) {
+      Patient p = instance.patients().at(edge.patientIdx());
+      HospitalBed h = instance.beds().at(edge.bedIdx());
+
+      file << "[" << p.name() << "; " << p.required_specialty() << "; " << p.priority() << "] -> ";
+      file << "[" << h.hospital() << "; " << h.specialty() << "; BED: " << h.id() << "];";
+    }
+  }
 
   std::cout << "> Dados gravados em " << outputFilename << "\n";
 }
@@ -99,7 +117,7 @@ int main(int argc, char* argv[]) {
   std::cout << "Custo total: " << totalCost << std::endl;
   std::cout << "Tempo de processamento: " << executionTime << std::endl;
 
-  write_data(userOptions, instance, totalCost, executionTime);
+  write_data(userOptions, instance, totalCost, executionTime, validAllocations);
 
   return 0;
 }
