@@ -48,7 +48,7 @@ std::vector<Edge> extractValid(
         if (i <= 0) continue;
         if (i > numPatients || i > numBeds) continue;
 
-        if (costMatrix[i][j] > INF) {
+        if (costMatrix[i][j] < INF) {
             validAllocations.push_back(Edge(i, j, costMatrix[i][j]));
         }
     }
