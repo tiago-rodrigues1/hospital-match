@@ -13,6 +13,15 @@ std::vector<std::vector<int>> buildCostMatrix(const std::vector<Patient>& patien
                                               const std::vector<HospitalBed>& beds,
                                               const std::vector<Edge>& viableEdges);
 
+std::vector<Edge> extractValid(
+  const std::vector<int>& p, 
+  const std::vector<std::vector<int>>& costMatrix,
+  const std::vector<Patient>& patients,
+  const std::vector<HospitalBed>& beds
+);
+
+int calculateTotalCost(const std::vector<Edge>& edges);
+
 int searchAugmentingPath(int currentPatient,
                          const std::vector<std::vector<int>>& costMatrix,
                          std::vector<int>& u,
