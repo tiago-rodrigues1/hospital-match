@@ -63,8 +63,9 @@ int calculateTotalCost(const std::vector<Edge> &edges) {
     totalCost += edge.weight();
   }
 
-  return totalCost;
+  return totalCost / MULTIPLIER;
 }
+
 int searchAugmentingPath(int currentPatient,
                          const std::vector<std::vector<int>>& costMatrix,
                          std::vector<int>& u,
