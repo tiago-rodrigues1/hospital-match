@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <chrono>
 
 #include "./include/common.hpp"
 #include "./include/parser.hpp"
@@ -60,7 +61,7 @@ void write_data(
   const RunningOpt& runningOpt,
   const Instance& instance,
   double totalCost,
-  int executionTime,
+  double executionTime,
   const std::vector<Edge>& edges
 ) {
   std::string outputFilename = get_output_filename(runningOpt.inputPath);
@@ -71,7 +72,7 @@ void write_data(
     exit(EXIT_FAILURE);
   }
 
-  file << "patients_number, beds_number, total_cost, execution_time\n";
+  file << "patients_number, beds_number, total_cost, execution_time(ms)\n";
   file << instance.patients().size() << ", ";
   file << instance.beds().size() << ", ";
   file << totalCost << ", ";
@@ -106,16 +107,22 @@ int main(int argc, char* argv[]) {
   int numBeds = instance.beds().size();
   std::vector<std::vector<int>> costMatrix = instance.expandedCostMatrix();
 
+  auto start_time = std::chrono::high_resolution_clock::now();
+
   std::vector<int> p = hungarianAlgorithm(costMatrix, costMatrix.size() - 1);
   std::vector<Edge> validAllocations = extractValid(p, costMatrix, instance.patients(), instance.beds());
   double totalCost = calculateTotalCost(validAllocations);
-  int executionTime = 100;
+  
+  auto end_time = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double, std::milli> time_span = end_time - start_time;
+  double executionTime = time_span.count();
 
   std::cout << "Arquivo lido com sucesso!" << std::endl;
   std::cout << "Total de Pacientes: " << numPatients << std::endl;
   std::cout << "Total de Leitos: " << numBeds << std::endl;
   std::cout << "Custo total: " << totalCost << std::endl;
-  std::cout << "Tempo de processamento: " << executionTime << std::endl;
+  std::cout << "Tempo de processamento (ms): " << executionTime << std::endl;
 
   write_data(userOptions, instance, totalCost, executionTime, validAllocations);
 
