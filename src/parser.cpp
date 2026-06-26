@@ -21,7 +21,7 @@ Instance parserORLibraryAPDense(const std::string& filename) {
     
     Instance instance;
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 1; i <= n; i++) {
         instance.addPatient(Patient(i));
         instance.addBed(HospitalBed(i, i)); // Nesse caso, consideramos que cada leito vem de um hospital diferente
     }
@@ -56,7 +56,7 @@ Instance parserORLibraryAPSparse(const std::string& filename) {
     int n;
     file >> n;
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 1; i <= n; i++) {
         instance.addPatient(Patient(i));
         instance.addBed(HospitalBed(i, i));
     }
@@ -93,7 +93,7 @@ Instance parserRealProblem(const std::string& filename) {
     int n, m;
     file >> n >> m;
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 1; i <= n; i++) {
         std::string name, specialty;
         int priority;
         double x, y;
@@ -103,9 +103,9 @@ Instance parserRealProblem(const std::string& filename) {
         instance.addPatient(Patient(i, name, specialty, priority, Location{x, y}));
     }
 
-    int globalBedId = 0;
+    int globalBedId = 1;
 
-    for (int i = 0; i < m; i++) {
+    for (int i = 1; i <= m; i++) {
         std::string hospital, specialty;
         int capacity;
         double x, y;
@@ -126,6 +126,16 @@ Instance parserRealProblem(const std::string& filename) {
     return instance;
 }
 
+Instance Instance::parse(const RunningOpt& runningOpt) {
+    if (runningOpt.parser == OR_LIB_DENSE) {
+        return parserORLibraryAPDense(runningOpt.inputPath);
+    } else if (runningOpt.parser == OR_LIB_SPARSE) {
+        return parserORLibraryAPSparse(runningOpt.inputPath);
+    }
+
+    return parserRealProblem(runningOpt.inputPath);
+}
+
 void Instance::calculateEdgeWeights() {
     for (size_t i = 0; i < m_patients.size(); i++) {
         for (size_t j = 0; j < m_beds.size(); j++) {
@@ -141,44 +151,4 @@ void Instance::calculateEdgeWeights() {
             }
         }
     }
-}
-
-int main() {
-    // std::string arquivoTeste = "../instances/assign200.txt"; 
-    
-    // Instance instancia = parserORLibraryAP(arquivoTeste);
-
-    // if (!instancia.patients().empty()) {
-    //     std::cout << "Arquivo lido com sucesso!" << std::endl;
-    //     std::cout << "Total de Pacientes: " << instancia.patients().size() << std::endl;
-    //     std::cout << "Total de Leitos: " << instancia.beds().size() << std::endl;
-    //     std::cout << "Custo do Paciente 0 para Leito 0: " << instancia.expandedCostMatrix()[0][0] << std::endl;
-    // }
-
-    std::string arquivoTeste = "../instances/realProblem.txt";
-    
-    Instance instancia = parserRealProblem(arquivoTeste);
-
-    std::cout << ">>> PACIENTES LIDOS: " << instancia.patients().size() << "\n";
-    for (const auto& p : instancia.patients()) {
-        std::cout << " - ID " << p.id() << " | " << p.name() << " | Precisa de: " << p.required_specialty() << "\n";
-    }
-    std::cout << "\n";
-
-    std::cout << ">>> LEITOS EXPANDIDOS: " << instancia.beds().size() << "\n";
-    for (const auto& b : instancia.beds()) {
-        std::cout << " - Leito ID " << b.id() << " | " << b.hospital() 
-                  << " | Especialidade: " << b.specialty() << "\n";
-    }
-    std::cout << "--------------------------------------------------\n";
-
-    if (!instancia.expandedCostMatrix().empty()) {
-        int linhas = instancia.expandedCostMatrix().size();
-        int colunas = instancia.expandedCostMatrix()[0].size();
-        std::cout << ">>> MATRIZ DE CUSTOS GERADA: " << linhas << "x" << colunas << "\n";
-    } else {
-        std::cout << ">>> AVISO: Matriz de custos está vazia.\n";
-    }
-
-    return 0;
 }

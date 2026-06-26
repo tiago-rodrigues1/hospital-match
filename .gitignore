@@ -75,3 +75,4 @@ tags
 /vim-*.patch
 
 hospital-match
+output_*

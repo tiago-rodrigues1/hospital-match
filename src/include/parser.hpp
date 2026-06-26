@@ -26,6 +26,7 @@ class Instance {
         void addEdge(const Edge& edge) { m_edges.push_back(edge); }
         void setExpandedCostMatrix(const std::vector<std::vector<int>>& matrix) { m_expandedCostMatrix = matrix; }
         void calculateEdgeWeights();
+        static Instance parse(const RunningOpt& runningOpt);
 
         const std::vector<Patient>& patients() const { return m_patients; }
         const std::vector<HospitalBed>& beds() const { return m_beds; }

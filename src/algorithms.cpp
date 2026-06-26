@@ -10,18 +10,18 @@ std::vector<std::vector<int>> buildCostMatrix(const std::vector<Patient>& patien
 
     int n = std::max(numPatients, numBeds);
 
-    std::vector<std::vector<int>> costMatrix(n, std::vector<int>(n, INF));
+    std::vector<std::vector<int>> costMatrix(n + 1, std::vector<int>(n + 1, INF));
 
     for (const Edge& edge : viableEdges) {
-        int i = edge.patientIdx();
-        int j = edge.bedIdx();
+        int i = edge.patientIdx() + 1;
+        int j = edge.bedIdx() + 1;
 
         costMatrix[i][j] = static_cast<int>(std::round(edge.weight()*MULTIPLIER));
     }
 
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            if (i >= numPatients || j >= numBeds) {
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (i == 0 || j == 0 || i > numPatients || j > numBeds) {
                 costMatrix[i][j] = 0;
             }
         }
@@ -42,22 +42,22 @@ std::vector<Edge> extractValid(
     int n = std::max(numPatients, numBeds);
     std::vector<Edge> validAllocations;
 
-    for (int j = 0; j < n; j++) {
+    for (int j = 1; j <= n; j++) {
         int i = p[j];
         
         if (i <= 0) continue;
-        if (i > numPatients || i > numBeds) continue;
+        if (i > numPatients || j > numBeds) continue;
 
         if (costMatrix[i][j] < INF) {
-            validAllocations.push_back(Edge(i, j, costMatrix[i][j]));
+            validAllocations.push_back(Edge(i - 1, j - 1, costMatrix[i][j]));
         }
     }
 
     return validAllocations;
 }
 
-int calculateTotalCost(const std::vector<Edge> &edges) {
-  int totalCost = 0;
+double calculateTotalCost(const std::vector<Edge> &edges) {
+  double totalCost = 0.0;
 
   for (const auto& edge : edges) {
     totalCost += edge.weight();
