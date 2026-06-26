@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <sstream>
 
 #include "./include/patient.hpp"
 #include "./include/hospitalbed.hpp"
@@ -90,15 +91,37 @@ Instance parserRealProblem(const std::string& filename) {
         exit(1);
     }
 
-    int n, m;
-    file >> n >> m;
+    std::string line;
+    std::string token;
+
+    if (!std::getline(file, line)) {
+        std::cerr << "Erro: Arquivo vazio ou formato inválido." << std::endl;
+        exit(1);
+    }
+
+    std::stringstream ssHeader(line);
+
+    std::getline(ssHeader, token, ',');
+    int n = std::stoi(token);
+    
+    std::getline(ssHeader, token, ',');
+    int m = std::stoi(token);
 
     for (int i = 1; i <= n; i++) {
-        std::string name, specialty;
-        int priority;
-        double x, y;
+        std::getline(file, line);
+        std::stringstream ssPatient(line);
+        
+        std::string name, specialty, priorityStr, xStr, yStr;
 
-        file >> name >> specialty >> priority >> x >> y;
+        std::getline(ssPatient, name, ',');
+        std::getline(ssPatient, specialty, ',');
+        std::getline(ssPatient, priorityStr, ',');
+        std::getline(ssPatient, xStr, ',');
+        std::getline(ssPatient, yStr, ',');
+
+        int priority = std::stoi(priorityStr);
+        double x = std::stod(xStr);
+        double y = std::stod(yStr);
 
         instance.addPatient(Patient(i, name, specialty, priority, Location{x, y}));
     }
@@ -106,11 +129,20 @@ Instance parserRealProblem(const std::string& filename) {
     int globalBedId = 1;
 
     for (int i = 1; i <= m; i++) {
-        std::string hospital, specialty;
-        int capacity;
-        double x, y;
+        std::getline(file, line);
+        std::stringstream ssHospital(line);
 
-        file >> hospital >> specialty >> capacity >> x >> y;
+        std::string hospital, specialty, capacityStr, xStr, yStr;
+
+        std::getline(ssHospital, hospital, ',');
+        std::getline(ssHospital, specialty, ',');
+        std::getline(ssHospital, capacityStr, ',');
+        std::getline(ssHospital, xStr, ',');
+        std::getline(ssHospital, yStr, ',');
+
+        int capacity = std::stoi(capacityStr);
+        double x = std::stod(xStr);
+        double y = std::stod(yStr);
 
         for (int j = 0; j < capacity; j++) {
             instance.addBed(HospitalBed(globalBedId, specialty, hospital, Location{x, y}));
