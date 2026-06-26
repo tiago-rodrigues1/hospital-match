@@ -59,7 +59,7 @@ std::string get_output_filename(const std::string& path) {
 void write_data(
   const RunningOpt& runningOpt,
   const Instance& instance,
-  int totalCost,
+  double totalCost,
   int executionTime,
   const std::vector<Edge>& edges
 ) {
@@ -78,14 +78,15 @@ void write_data(
   file << executionTime << "\n";
 
   if (runningOpt.parser == NON_OR_LIB_RP) {
-    file << "- allocations\n";
+    file << "- Allocations:\n";
 
     for (const Edge& edge : edges) {
       Patient p = instance.patients().at(edge.patientIdx());
       HospitalBed h = instance.beds().at(edge.bedIdx());
 
-      file << "[" << p.name() << "; " << p.required_specialty() << "; " << p.priority() << "] -> ";
-      file << "[" << h.hospital() << "; " << h.specialty() << "; BED: " << h.id() << "];";
+      file << "[" << p.name() << "; " << p.required_specialty() << "; " << p.priority() << "] -> "
+        << "[" << h.hospital() << "; " << h.specialty() << "; BED: " << h.id() << "]; COST = "
+        << edge.weight() / MULTIPLIER << std::endl;
     }
   }
 
@@ -113,7 +114,6 @@ int main(int argc, char* argv[]) {
   std::cout << "Arquivo lido com sucesso!" << std::endl;
   std::cout << "Total de Pacientes: " << numPatients << std::endl;
   std::cout << "Total de Leitos: " << numBeds << std::endl;
-  std::cout << "Custo do Paciente 0 para Leito 0: " << costMatrix[0][0] << std::endl;
   std::cout << "Custo total: " << totalCost << std::endl;
   std::cout << "Tempo de processamento: " << executionTime << std::endl;
 
