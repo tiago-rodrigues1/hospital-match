@@ -1,0 +1,6 @@
+3,2
+Paciente 1,Cardiologia,5,0,0
+Paciente 2,Cardiologia,2,0,10
+Paciente 3,Ortopedia,1,10,0
+Hospital 1,Cardiologia,2,0,5
+Hospital 2,Ortopedia,1,10,5

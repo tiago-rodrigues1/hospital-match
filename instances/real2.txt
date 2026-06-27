@@ -1,0 +1,7 @@
+4,2
+Paulo,Cardiologia,2,5,0
+Jamilly,Cardiologia,5,6,0
+Tiago,Cardiologia,1,18,0
+Júlia,Cardiologia,4,10,0
+Hospital Central,Cardiologia,2,0,0
+Hospital Regional,Cardiologia,2,20,0
