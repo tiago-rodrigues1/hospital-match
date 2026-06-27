@@ -43,7 +43,7 @@ n
 c11 c12 ... c1n
 c21 c22 ... c2n
 ...
-n1n n2n ... cnn
+cn1 cn2 ... cnn
 ```
 
 Onde `n` é o número de pacientes e leitos, e cada custo é um inteiro.
