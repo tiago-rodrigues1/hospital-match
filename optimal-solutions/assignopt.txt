@@ -12,3 +12,7 @@ assignp800    2239
 assignp1500   5839
 assignp3000  18696
 assignp5000  48533
+
+real1         8.5
+real2         8.2
+real3         7.0
